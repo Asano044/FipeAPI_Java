@@ -1,6 +1,7 @@
 package br.com.casasbahia.consultador.principal;
 
 import br.com.casasbahia.consultador.model.DadosAnos;
+import br.com.casasbahia.consultador.model.DadosFinal;
 import br.com.casasbahia.consultador.model.DadosModelo;
 import br.com.casasbahia.consultador.model.DadosVeiculo;
 import br.com.casasbahia.consultador.service.ConsumoApi;
@@ -24,7 +25,7 @@ public class Principal {
         String veiculo = leitura.nextLine();
         url_base = ENDERECO + veiculo + MARCAS;
         String json = consumo.obterDados(url_base);
-        System.out.println(json);
+//        System.out.println(json);
 
 //        Convertendo para veículo
         List<DadosVeiculo> automoveis = conversor.obterList(json, DadosVeiculo.class);
@@ -33,12 +34,12 @@ public class Principal {
                 .forEach(System.out::println);
 
 //        Fase 2: Solicitando o modelo
-        System.out.println("\nInforme pelo código o modelo que deseja consultar");
-        int codigoModelo = leitura.nextInt();
+        System.out.println("\nInforme pelo código a marca que deseja consultar");
+        int codigoMarca = leitura.nextInt();
         leitura.nextLine();
-        url_base = url_base + "/" + codigoModelo + "/modelos";
+        url_base = url_base + "/" + codigoMarca + "/modelos";
         json = consumo.obterDados(url_base);
-        System.out.println(json);
+//        System.out.println(json);
 
         DadosModelo modeloLista = conversor.obterDados(json, DadosModelo.class);
         modeloLista.modelos().stream()
@@ -46,18 +47,29 @@ public class Principal {
                 .forEach(System.out::println);
 
 //        Fase 3: Solicitando o ano que deseja saber o veículo ao ter o código do modelo informado.
-        System.out.println("Qual modelo você deseja selecionar? Informe pelo código: ");
-        int codigoAno = leitura.nextInt();
+        System.out.println("\nQual modelo você deseja selecionar? Informe pelo código: ");
+        int codigoModelo = leitura.nextInt();
         leitura.nextLine();
-        url_base = url_base + "/" + codigoAno + "/anos";
+        url_base = url_base + "/" + codigoModelo + "/anos";
 
         json = consumo.obterDados(url_base);
-        System.out.println(json);
+//        System.out.println(json);
 //        Convertendo para DadosAnos
 
         List<DadosAnos> anos = conversor.obterList(json, DadosAnos.class);
         anos.stream()
                 .sorted(Comparator.comparing(DadosAnos::codigo))
                 .forEach(System.out::println);
+
+//        Fase 4: Imprimindo o veículo selecionado junto com o valor respectivo dele.
+        System.out.println("\nQual ano deseja selecionar? Informe pelo código: ");
+        String codigoAno = leitura.nextLine();
+        url_base = url_base + "/" + codigoAno;
+        json = consumo.obterDados(url_base);
+//        System.out.println(json);
+
+        DadosFinal resultado = conversor.obterDados(json, DadosFinal.class);
+        System.out.println(resultado);
+
     }
 }
