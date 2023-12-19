@@ -1,5 +1,6 @@
 package br.com.casasbahia.consultador.principal;
 
+import br.com.casasbahia.consultador.model.DadosAnos;
 import br.com.casasbahia.consultador.model.DadosModelo;
 import br.com.casasbahia.consultador.model.DadosVeiculo;
 import br.com.casasbahia.consultador.service.ConsumoApi;
@@ -12,6 +13,7 @@ import java.util.Scanner;
 public class Principal {
     private final String ENDERECO = "https://parallelum.com.br/fipe/api/v1/";
     private final String MARCAS = "/marcas";
+    private String url_base;
 
     private ConsumoApi consumo = new ConsumoApi();
     private Scanner leitura = new Scanner(System.in);
@@ -20,7 +22,8 @@ public class Principal {
     public void exibeMenu() {
         System.out.println("Informe o veículo que deseja consultar o preço: [motos/carros/caminhoes]");
         String veiculo = leitura.nextLine();
-        String json = consumo.obterDados(ENDERECO + veiculo + MARCAS);
+        url_base = ENDERECO + veiculo + MARCAS;
+        String json = consumo.obterDados(url_base);
         System.out.println(json);
 
 //        Convertendo para veículo
@@ -33,7 +36,8 @@ public class Principal {
         System.out.println("\nInforme pelo código o modelo que deseja consultar");
         int codigoModelo = leitura.nextInt();
         leitura.nextLine();
-        json = consumo.obterDados(ENDERECO + veiculo + "/marcas/" + codigoModelo + "/modelos");
+        url_base = url_base + "/" + codigoModelo + "/modelos";
+        json = consumo.obterDados(url_base);
         System.out.println(json);
 
         DadosModelo modeloLista = conversor.obterDados(json, DadosModelo.class);
@@ -41,5 +45,19 @@ public class Principal {
                 .sorted(Comparator.comparing(DadosVeiculo::codigo))
                 .forEach(System.out::println);
 
+//        Fase 3: Solicitando o ano que deseja saber o veículo ao ter o código do modelo informado.
+        System.out.println("Qual modelo você deseja selecionar? Informe pelo código: ");
+        int codigoAno = leitura.nextInt();
+        leitura.nextLine();
+        url_base = url_base + "/" + codigoAno + "/anos";
+
+        json = consumo.obterDados(url_base);
+        System.out.println(json);
+//        Convertendo para DadosAnos
+
+        List<DadosAnos> anos = conversor.obterList(json, DadosAnos.class);
+        anos.stream()
+                .sorted(Comparator.comparing(DadosAnos::codigo))
+                .forEach(System.out::println);
     }
 }
