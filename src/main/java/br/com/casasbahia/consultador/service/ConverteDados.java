@@ -1,6 +1,5 @@
 package br.com.casasbahia.consultador.service;
 
-import br.com.casasbahia.consultador.model.DadosVeiculo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
